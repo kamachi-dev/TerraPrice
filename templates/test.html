@@ -6,11 +6,14 @@
 <body>
     <h1>Search Results</h1>
     {% if student %}
-        <ul>
         {% for item in student %}
-            <li>{{ item }}</li>
+            <ul>
+                {% for key, value in item.items() %}
+                    <li><strong>{{ key }}:</strong> {{ value }}</li>
+                {% endfor %}
+            </ul>
+            <hr>
         {% endfor %}
-        </ul>
     {% else %}
         <p>No results found.</p>
     {% endif %}

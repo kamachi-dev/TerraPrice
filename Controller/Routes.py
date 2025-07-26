@@ -7,5 +7,6 @@ def register_routes(app):
         region = request.args.get("region")
         student_data = search_region(region)
         return render_template("test.html", student=student_data)
+
     
 

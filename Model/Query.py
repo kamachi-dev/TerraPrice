@@ -23,4 +23,4 @@ def query_db(query, args=(), fetch=False, dictionary=False):
 
 def search_region(region):
     result = query_db("SELECT * FROM dataset WHERE admin1 = %s", (region,), fetch=True, dictionary=True)
-    return result
+    return [dict(row) for row in result]
