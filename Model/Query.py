@@ -1,5 +1,6 @@
 from psycopg2.extras import RealDictCursor
 from .ConnectionInPostgre import MyConnection
+import hashlib
 
 def query_db(query, args=(), fetch=False, dictionary=False):
     conn = MyConnection(
@@ -24,3 +25,64 @@ def query_db(query, args=(), fetch=False, dictionary=False):
 def search_region(region):
     result = query_db("SELECT * FROM dataset WHERE admin1 = %s", (region,), fetch=True, dictionary=True)
     return [dict(row) for row in result]
+
+def authenticate_user(username, password):
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
+    
+    result = query_db(
+        'SELECT id, username, "isAdmin" FROM account WHERE username = %s AND password = %s',
+        (username, hashed_password),
+        fetch=True,
+        dictionary=True
+    )
+    print("AUTH CALLED")
+    print(result[0] if result else None)
+    return result[0] if result else None
+
+def create_user(username, password, is_admin=False):
+    existing_user = query_db(
+        "SELECT id FROM account WHERE username = %s",
+        (username,),
+        fetch=True,
+        dictionary=True
+    )
+    
+    if existing_user:
+        return False, "Username already exists"
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
+    
+    try:
+        query_db(
+            "INSERT INTO account (username, password) VALUES (%s, %s)",
+            (username, hashed_password)
+        )
+        return True, "Account created successfully"
+    except Exception as e:
+        print(f"Error creating user: {e}")
+        return False, "Failed to create account"
+
+def get_categories():
+    result = query_db("SELECT DISTINCT category FROM dataset ORDER BY category", fetch=True, dictionary=True)
+    return [row['category'] for row in result]
+
+def get_commodities_by_category(category):
+    result = query_db(
+        "SELECT DISTINCT commodity FROM dataset WHERE category = %s ORDER BY commodity",
+        (category,),
+        fetch=True,
+        dictionary=True
+    )
+    return [row['commodity'] for row in result]
+
+def add_dataset_entry(data):
+    try:
+        query_db(
+            """INSERT INTO dataset (latitude, longitude, category, commodity, pricetype, value) 
+               VALUES (%s, %s, %s, %s, %s, %s)""",
+            (data['latitude'], data['longitude'], data['category'], 
+             data['commodity'], data['pricetype'], data['value'])
+        )
+        return True
+    except Exception as e:
+        print(f"Error adding dataset entry: {e}")
+        return False

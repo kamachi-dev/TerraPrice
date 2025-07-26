@@ -2,6 +2,7 @@ from flask import Flask
 from controller.Routes import register_routes
 
 app = Flask(__name__)
+app.secret_key = 'TerraPrice'
 register_routes(app)
 
 if __name__ == "__main__":
