@@ -185,14 +185,15 @@ body {
 .result-section {
   margin-top: 25px;
   padding: 20px;
-  background: #f8f9fa;
+  background: #2d5a3d;
   border-radius: 8px;
-  border-left: 4px solid #2d5a3d;
+  /* border-left: 4px solid #2d5a3d; */
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 .result-section h4 {
   margin-bottom: 15px;
-  color: #2d5a3d;
+  color: #ffffff;
 }
 
 .result-card {
@@ -242,7 +243,7 @@ body {
   }
 
   .tab-button.active {
-    border-left-color: #2d5a3d;
+    /* border-left-color: #2d5a3d; */
     border-bottom-color: #e9ecef;
   }
 }

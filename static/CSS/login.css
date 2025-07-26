@@ -7,16 +7,23 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: #f5f5f5;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px;
+
+  background-image: url("bg.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
 }
 
 .container {
   display: flex;
-  width: 1000px;
-  height: 600px;
+  width: 100%;
+  max-width: 1000px;
+  min-height: 600px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
@@ -25,26 +32,58 @@ body {
 
 .login-section {
   flex: 1;
-  padding: 60px 50px;
+  padding: 40px;
   display: flex;
   flex-direction: column;
+  min-height: 600px;
+  overflow-y: auto;
+}
+
+.logo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.logo div {
+  width: 40px;
+  height: 40px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url("Colored_Logo.png");
 }
 
 .logo h2 {
   color: #2d5a3d;
-  margin-bottom: 40px;
-  font-size: 24px;
+  font-size: 22px;
+  margin-left: 8px;
+}
+
+.login-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 100%;
+}
+
+.form-container {
+  width: 100%;
 }
 
 .form-container h1 {
-  font-size: 32px;
+  font-size: 28px;
   color: #1a1a1a;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .subtitle {
   color: #666;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
+  font-size: 14px;
 }
 
 .link {
@@ -58,9 +97,13 @@ body {
 }
 
 .alert {
-  padding: 12px;
+  padding: 12px 16px;
   border-radius: 6px;
   margin-bottom: 20px;
+  font-size: 14px;
+  line-height: 1.4;
+  word-wrap: break-word;
+  max-width: 100%;
 }
 
 .alert-error {
@@ -71,12 +114,12 @@ body {
 
 .alert-success {
   background: #efe;
-  color: #3c3;
+  color: #2d5a3d;
   border: 1px solid #cfc;
 }
 
 .form-group {
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
@@ -84,6 +127,7 @@ body {
   margin-bottom: 6px;
   color: #333;
   font-weight: 500;
+  font-size: 14px;
 }
 
 .form-group input {
@@ -93,6 +137,7 @@ body {
   border-radius: 6px;
   font-size: 16px;
   transition: border-color 0.3s;
+  box-sizing: border-box;
 }
 
 .form-group input:focus {
@@ -113,22 +158,7 @@ body {
   border: none;
   cursor: pointer;
   font-size: 16px;
-}
-
-.checkbox {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  color: #666;
-}
-
-.checkbox input {
-  width: auto;
-  margin-right: 8px;
-}
-
-.checkmark {
-  margin-left: 4px;
+  padding: 4px;
 }
 
 .btn-primary {
@@ -142,6 +172,7 @@ body {
   font-weight: 600;
   cursor: pointer;
   transition: background 0.3s;
+  margin-top: 10px;
 }
 
 .btn-primary:hover {
@@ -155,52 +186,126 @@ body {
 
 .promo-section {
   flex: 1;
-  background: linear-gradient(135deg, #2d5a3d 0%, #1f3d2a 100%);
-  padding: 60px 50px;
+  background: linear-gradient(135deg, #3e6d4e 0%, #050b07 100%);
+  padding: 40px;
   color: white;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-height: 600px;
 }
 
 .promo-card {
   background: rgba(255, 255, 255, 0.1);
   padding: 30px;
   border-radius: 12px;
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   backdrop-filter: blur(10px);
 }
 
 .promo-card h3 {
-  font-size: 24px;
+  font-size: 22px;
   margin-bottom: 16px;
 }
 
 .promo-card p {
-  margin-bottom: 20px;
+  margin-bottom: 0;
   opacity: 0.9;
   line-height: 1.6;
+  font-size: 15px;
 }
 
 .features h3 {
-  font-size: 20px;
+  font-size: 18px;
   margin-bottom: 16px;
 }
 
 .features p {
   opacity: 0.8;
   line-height: 1.6;
+  font-size: 14px;
 }
 
+
 @media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-    width: 90%;
-    height: auto;
+  body {
+    padding: 10px;
   }
 
-  .login-section,
-  .promo-section {
-    padding: 40px 30px;
+  .container {
+    flex-direction: column;
+    width: 100%;
+    max-width: 500px;
+    min-height: auto;
   }
+
+  .login-section {
+    padding: 30px 25px;
+    min-height: auto;
+  }
+
+  .promo-section {
+    padding: 30px 25px;
+    min-height: auto;
+  }
+
+  .form-container h1 {
+    font-size: 24px;
+  }
+
+  .logo div {
+    width: 35px;
+    height: 35px;
+  }
+
+  .logo h2 {
+    font-size: 20px;
+  }
+
+  .promo-card {
+    padding: 25px;
+    margin-bottom: 25px;
+  }
+
+  .promo-card h3 {
+    font-size: 20px;
+  }
+
+  .features h3 {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-section {
+    padding: 25px 20px;
+  }
+
+  .promo-section {
+    padding: 25px 20px;
+  }
+
+  .form-group input {
+    font-size: 16px; 
+  }
+
+  .btn-primary {
+    padding: 16px;
+    font-size: 16px;
+  }
+}
+
+.login-section,
+.promo-section {
+  overflow-x: hidden;
+  word-wrap: break-word;
+}
+
+/* Animation for form switching */
+.form-container {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.form-container.switching {
+  opacity: 0;
 }

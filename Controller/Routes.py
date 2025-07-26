@@ -67,6 +67,7 @@ def register_routes(app):
         longitude = request.form.get("longitude")
         category = request.form.get("category")
         commodity = request.form.get("commodity")
+        pricetype = request.form.get("pricetype")
         
         # TODO: Implement neural network prediction
         # For now, return a mock response
@@ -76,7 +77,8 @@ def register_routes(app):
             'success': True,
             'predicted_price': predicted_price,
             'location': f"Lat: {latitude}, Lng: {longitude}",
-            'commodity': commodity
+            'commodity': commodity,
+            'pricetype': pricetype
         })
     
     @app.route("/add_dataset", methods=["POST"])
@@ -99,9 +101,4 @@ def register_routes(app):
             'success': success,
             'message': 'Dataset entry added successfully' if success else 'Failed to add dataset entry'
         })
-    
-    @app.route("/search")
-    def show_student():
-        region = request.args.get("region")
-        student_data = search_region(region)
-        return render_template("test.html", student=student_data)
+

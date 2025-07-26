@@ -10,7 +10,7 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <h1>🌍 TerraPrice Dashboard</h1>
+            <h1>TerraPrice</h1>
             <div class="user-info">
                 <span>Welcome, {{ session.username }}!</span>
                 <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
@@ -55,6 +55,16 @@
                                 <option value="">Select Category First</option>
                             </select>
                         </div>
+
+                        <div class="form-group">
+                            <label for="predict-pricetype">Price Type</label>
+                            <select id="predict-pricetype" name="pricetype" required>
+                                <option value="">Select Price Type</option>
+                                <option value="retail">Retail</option>
+                                <option value="wholesale">Wholesale</option>
+                                <option value="farmgate">Farmgate</option>
+                            </select>
+                        </div>
                         
                         <input type="hidden" id="predict-latitude" name="latitude">
                         <input type="hidden" id="predict-longitude" name="longitude">
@@ -66,6 +76,7 @@
                         <h4>Prediction Result</h4>
                         <div class="result-card">
                             <p><strong>Commodity:</strong> <span id="result-commodity"></span></p>
+                            <p><strong>Price Type:</strong> <span id="result-pricetype"></span></p>
                             <p><strong>Location:</strong> <span id="result-location"></span></p>
                             <p><strong>Predicted Price:</strong> ₱<span id="result-price"></span></p>
                         </div>

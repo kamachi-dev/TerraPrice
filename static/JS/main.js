@@ -176,6 +176,7 @@ function handlePredictSubmit(e) {
     .then((data) => {
       if (data.success) {
         document.getElementById("result-commodity").textContent = data.commodity
+        document.getElementById("result-pricetype").textContent = data.pricetype
         document.getElementById("result-location").textContent = data.location
         document.getElementById("result-price").textContent = data.predicted_price.toFixed(2)
         document.getElementById("prediction-result").style.display = "block"
