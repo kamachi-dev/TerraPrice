@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Click Map to Get Lat/Lng (PH Only)</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Leaflet CSS and JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <style>
+    #map {
+      height: 500px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+<p>Latitude: <span id="lat">-</span></p>
+<p>Longitude: <span id="lng">-</span></p>
+
+<!-- Optional hidden inputs for form submission -->
+<form action="your_script.php" method="POST">
+  <input type="hidden" name="latitude" id="lat-input">
+  <input type="hidden" name="longitude" id="lng-input">
+  <button type="submit">Submit Coordinates</button>
+</form>
+
+<script>
+  // Define Philippine bounds (SW and NE corners)
+  const philippinesBounds = [[4.2158, 116.87], [21.321, 126.605]];
+
+  // Create map
+  const map = L.map('map', {
+    center: [12.8797, 121.7740], // Center of PH
+    zoom: 6,
+    maxBounds: philippinesBounds,
+    maxBoundsViscosity: 1.0, // Prevent dragging outside
+  });
+
+  // Add OpenStreetMap tiles
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  let marker;
+
+  // When user clicks on the map
+  map.on('click', function (e) {
+  const lat = e.latlng.lat;
+  const lng = e.latlng.lng;
+
+  // Define boundaries
+  const south = 4.2158;
+  const north = 21.321;
+  const west = 116.87;
+  const east = 126.605;
+
+  // Check if click is inside the bounds
+  if (lat >= south && lat <= north && lng >= west && lng <= east) {
+    const roundedLat = lat.toFixed(6);
+    const roundedLng = lng.toFixed(6);
+
+    // Set or update marker
+    if (marker) {
+      marker.setLatLng(e.latlng);
+    } else {
+      marker = L.marker(e.latlng).addTo(map);
+    }
+
+    // Show and save coordinates
+    document.getElementById('lat').innerText = roundedLat;
+    document.getElementById('lng').innerText = roundedLng;
+    document.getElementById('lat-input').value = roundedLat;
+    document.getElementById('lng-input').value = roundedLng;
+  } else {
+    alert("⚠️ Please click only within the Philippines.");
+  }
+});
+
+</script>
+
+</body>
+</html>
