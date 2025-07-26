@@ -26,6 +26,25 @@ body {
   align-items: center;
 }
 
+.header-logo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.header-logo div {
+  width: 40px;
+  height: 40px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url("Logo.png");
+}
+
+.header-logo h1 {
+  margin-left: 5px;
+}
+
 .header h1 {
   font-size: 24px;
 }

@@ -50,9 +50,6 @@ function showAlert(message, type, containerId) {
   container.innerHTML = `<div class="alert alert-${type}">${message}</div>`
 
   // Auto-hide alert after 5 seconds
-  setTimeout(() => {
-    container.innerHTML = ""
-  }, 5000)
 }
 
 // Add form validation and registration handling
@@ -117,10 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (result.success) {
           showAlert("Account created successfully! You can now sign in.", "success", "register-alerts")
-          setTimeout(() => {
-            registerForm.reset()
-            document.getElementById("register-alerts").innerHTML = ""
-          }, 2000)
         } else {
           showAlert(result.message || "Registration failed. Please try again.", "error", "register-alerts")
         }

@@ -10,9 +10,13 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <h1>TerraPrice</h1>
+            <div class="header-logo">
+                <div></div>
+                <h1>TerraPrice</h1>
+            </div>
+            
             <div class="user-info">
-                <span>Welcome, {{ session.username }}!</span>
+                <span>Welcome, {{ session['username'] }}!</span>
                 <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
             </div>
         </div>
