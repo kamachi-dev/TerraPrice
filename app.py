@@ -1,5 +1,5 @@
 from flask import Flask
-from Controller.Routes import register_routes
+from controller.Routes import register_routes
 
 app = Flask(__name__)
 register_routes(app)
