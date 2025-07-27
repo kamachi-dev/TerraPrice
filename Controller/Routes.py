@@ -113,11 +113,7 @@ def register_routes(app):
             return jsonify({'error': 'Unauthorized'}), 403
         
         try:
-            # TODO: Implement actual model training
-            # For now, simulate training process
-            import time
-            time.sleep(2)  # Simulate training time
-            
+            train()
             return jsonify({
                 'success': True,
                 'message': 'Model retrained successfully with latest dataset'

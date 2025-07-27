@@ -141,8 +141,8 @@ def predict_from_saved_model(data_input, model_path='estimator.pkl'):
     scaler = model_data['scaler']
     feature_columns = model_data['feature_columns']
 
-    new_commodity = f'commodity_{data_input.get('commodity', None)}'
-    new_pricetype = f'pricetype_{data_input.get('pricetype', None)}'
+    new_commodity = f'commodity_{data_input.get("commodity", None)}'
+    new_pricetype = f'pricetype_{data_input.get("pricetype", None)}'
 
     # Process input data
     if isinstance(data_input, str):  # CSV file path
@@ -253,7 +253,7 @@ def pred(longt, lati, commo, pricetype):
         'latitude': lati,
         'longitude': longt,
         'commodity': commo,
-        'pricetype': pricetype
+        'pricetype': pricetype.title()
     }
     prediction = predict_from_saved_model(new_data)
     print(prediction)
