@@ -262,7 +262,12 @@ def pred(longt, lati, commo, pricetype):
         'pricetype': pricetype
     }
     prediction = predict_from_saved_model(new_data)
+    print(prediction)
     print(f"Predicted price: {prediction[0]:.2f}")
     return prediction[0]
 
 __main__.NeuralNetwork = NeuralNetwork
+# pred(120.98, 14.6, "Maize flour (yellow)", "Retail")
+
+
+train()
