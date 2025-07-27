@@ -4,6 +4,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import os
 import pickle
+import __main__
+
+
 
 # HELPER FUNCTIONS ################################################################
 def relu(x):
@@ -13,6 +16,12 @@ def relu_derivative(x):
     return (x > 0).astype(float)
 
 # NN FUNCTIONS ################################################################
+def relu(x):
+    return np.maximum(0, x)
+
+def relu_derivative(x):
+    return (x > 0).astype(float)
+
 class NeuralNetwork:
     def __init__(self, layer_sizes, learning_rate=0.01):
         self.layer_sizes = layer_sizes
@@ -245,18 +254,15 @@ def train():
     except Exception as e:
         print(f"Error testing saved model: {e}")
 
-def pred():
+def pred(longt, lati, commo, pricetype):
     new_data = {
-        'latitude': 14.5995,
-        'longitude': 120.9842,
-        'commodity': 'Rice',
-        'pricetype': 'Retail'
+        'latitude': lati,
+        'longitude': lati,
+        'commodity': commo,
+        'pricetype': pricetype
     }
     prediction = predict_from_saved_model(new_data)
     print(f"Predicted price: {prediction[0]:.2f}")
+    return prediction[0]
 
-
-
-# TEST RUN ##########################################################
-train()
-pred()
+__main__.NeuralNetwork = NeuralNetwork

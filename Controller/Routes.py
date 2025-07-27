@@ -1,5 +1,6 @@
 from flask import render_template, request, redirect, url_for, session, flash, jsonify
-from model.Query import search_region, authenticate_user, get_categories, get_commodities_by_category, add_dataset_entry, create_user
+from model.Query import authenticate_user, get_categories, get_commodities_by_category, add_dataset_entry, create_user
+from model.NN.estimator import *
 
 def register_routes(app):
     @app.route("/")
@@ -66,21 +67,17 @@ def register_routes(app):
         
         latitude = request.form.get("latitude")
         longitude = request.form.get("longitude")
-        category = request.form.get("category")
         commodity = request.form.get("commodity")
         pricetype = request.form.get("pricetype")
         
-        # TODO: Implement neural network prediction
-        # For now, return a mock response
-        predicted_price = 150.00  # Mock price
-        
         return jsonify({
             'success': True,
-            'predicted_price': predicted_price,
-            'location': f"Lat: {latitude}, Lng: {longitude}",
+            'predicted_price': pred(longitude, latitude, commodity, pricetype),
+            'location': f"Latitude: {latitude}, \n Longtitude: {longitude}",
             'commodity': commodity,
             'pricetype': pricetype
         })
+    
     
     @app.route("/add_dataset", methods=["POST"])
     def add_dataset():
