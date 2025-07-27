@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraPrice - Admin Dashboard</title>
+    <title>TerraPrice - Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='CSS/admin.css') }}">
 </head>
 <body>
     <div class="header">
         <div class="header-content">
-            <h1>🛡️ TerraPrice Admin Dashboard</h1>
+            <div class="header-logo">
+                <div></div>
+                <h1>TerraPrice</h1>
+            </div>
             <div class="user-info">
                 <span class="admin-badge">Admin</span>
                 <span>Welcome, {{ session.username }}!</span>
@@ -23,10 +26,6 @@
             <div class="stat-card">
                 <h3>Total Datasets</h3>
                 <p id="total-datasets">Loading...</p>
-            </div>
-            <div class="stat-card">
-                <h3>Latest Entries</h3>
-                <p id="latest-count">5</p>
             </div>
             <div class="stat-card">
                 <h3>Model Status</h3>
@@ -48,7 +47,7 @@
                     <div class="pagination-info">
                         <span id="pagination-info">Loading...</span>
                     </div>
-                    <button class="btn-refresh" onclick="loadAllDatasets()">🔄 Refresh</button>
+                    <button class="btn-refresh" onclick="loadAllDatasets()">Refresh</button>
                 </div>
             </div>
             
@@ -126,13 +125,13 @@
                 <div class="training-card">
                     <div class="training-info">
                         <h3>Current Model Status</h3>
-                        <p>Last trained: <span id="last-trained">Never</span></p>
+                        <!-- <p>Last trained: <span id="last-trained">Never</span></p> -->
                         <p>Training status: <span id="training-status">Ready</span></p>
                     </div>
                     
                     <div class="training-actions">
                         <button id="train-btn" class="btn-train" onclick="trainModel()">
-                            🚀 Retrain Model
+                            Retrain Model
                         </button>
                     </div>
                 </div>

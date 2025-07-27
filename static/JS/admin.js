@@ -157,7 +157,7 @@ function updatePaginationInfo() {
 // Update statistics
 function updateStats() {
   document.getElementById("total-datasets").textContent = totalCount.toLocaleString()
-  document.getElementById("latest-count").textContent = latestDatasets.length
+  // document.getElementById("latest-count").textContent = latestDatasets.length
 }
 
 // Navigation functions
@@ -217,7 +217,7 @@ async function trainModel() {
       addLogEntry(`Result: ${result.message}`, "success")
 
       trainingStatus.textContent = "Training completed"
-      document.getElementById("last-trained").textContent = new Date().toLocaleString()
+      // document.getElementById("last-trained").textContent = new Date().toLocaleString()
       document.getElementById("model-status").textContent = "Updated"
 
       // Show success message
@@ -237,7 +237,7 @@ async function trainModel() {
   } finally {
     // Re-enable button
     trainBtn.disabled = false
-    trainBtn.textContent = "🚀 Retrain Model"
+    trainBtn.textContent = "Retrain Model"
 
     // Reset status after delay
     setTimeout(() => {
