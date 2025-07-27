@@ -37,7 +37,7 @@ body {
 }
 
 .admin-badge {
-  background: #37ff00;
+  background: #ff6b35;
   color: white;
   padding: 4px 12px;
   border-radius: 12px;
@@ -150,6 +150,17 @@ body {
   font-size: 24px;
 }
 
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.pagination-info {
+  color: #666;
+  font-size: 14px;
+}
+
 .btn-refresh {
   background: #2d5a3d;
   color: white;
@@ -203,6 +214,69 @@ tr:hover {
   padding: 40px !important;
 }
 
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 30px;
+  border-top: 1px solid #e9ecef;
+  gap: 15px;
+}
+
+.btn-pagination {
+  background: #2d5a3d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s;
+}
+
+.btn-pagination:hover:not(:disabled) {
+  background: #1f3d2a;
+}
+
+.btn-pagination:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
+.page-number {
+  background: #f8f9fa;
+  color: #666;
+  border: 1px solid #e9ecef;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+  min-width: 40px;
+  text-align: center;
+}
+
+.page-number:hover {
+  background: #e9ecef;
+}
+
+.page-number.active {
+  background: #2d5a3d;
+  color: white;
+  border-color: #2d5a3d;
+}
+
+.page-ellipsis {
+  color: #666;
+  padding: 8px 4px;
+}
+
 .training-section {
   padding: 30px;
 }
@@ -244,7 +318,7 @@ tr:hover {
 }
 
 .btn-train {
-  background: #37ff00;
+  background: #ff6b35;
   color: white;
   border: none;
   padding: 15px 30px;
@@ -333,6 +407,11 @@ tr:hover {
     text-align: center;
   }
 
+  .header-controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+
   .training-card {
     flex-direction: column;
     gap: 20px;
@@ -350,5 +429,15 @@ tr:hover {
   th,
   td {
     padding: 8px 10px;
+  }
+
+  .pagination-controls {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .page-numbers {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }

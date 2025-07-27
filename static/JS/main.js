@@ -8,17 +8,14 @@ const philippinesBounds = [
 ]
 const philippinesCenter = [12.8797, 121.774]
 
-// Import Leaflet library
 const L = window.L
 
-// Initialize maps when page loads
 document.addEventListener("DOMContentLoaded", () => {
   initializeMaps()
   setupEventListeners()
 })
 
 function initializeMaps() {
-  // Initialize prediction map
   predictMap = L.map("predict-map", {
     center: philippinesCenter,
     zoom: 6,
@@ -56,7 +53,6 @@ function handleMapClick(e, type) {
   const lat = e.latlng.lat
   const lng = e.latlng.lng
 
-  // Check if click is within Philippines bounds
   if (lat >= 4.2158 && lat <= 21.321 && lng >= 116.87 && lng <= 126.605) {
     const roundedLat = lat.toFixed(6)
     const roundedLng = lng.toFixed(6)

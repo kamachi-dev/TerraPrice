@@ -49,15 +49,12 @@ function showAlert(message, type, containerId) {
   const container = document.getElementById(containerId)
   container.innerHTML = `<div class="alert alert-${type}">${message}</div>`
 
-  // Auto-hide alert after 5 seconds
 }
 
-// Add form validation and registration handling
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.querySelector("#login-form form")
   const registerForm = document.getElementById("registration-form")
 
-  // Login form validation
   if (loginForm) {
     loginForm.addEventListener("submit", (e) => {
       const usernameInput = document.getElementById("username")
@@ -70,7 +67,6 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
 
-  // Registration form handling
   if (registerForm) {
     registerForm.addEventListener("submit", async (e) => {
       e.preventDefault()
@@ -80,22 +76,18 @@ document.addEventListener("DOMContentLoaded", () => {
       const confirmPassword = formData.get("confirm_password")
       const submitButton = registerForm.querySelector('button[type="submit"]')
 
-      // Clear previous alerts
       document.getElementById("register-alerts").innerHTML = ""
 
-      // Validate passwords match
       if (password !== confirmPassword) {
         showAlert("Passwords do not match", "error", "register-alerts")
         return
       }
 
-      // Validate password length
       if (password.length < 6) {
         showAlert("Password must be at least 6 semi-pogi long", "error", "register-alerts")
         return
       }
 
-      // Validate username length
       if (formData.get("username").length < 3) {
         showAlert("Username must be at least 3 semi-pogi long", "error", "register-alerts")
         return

@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, session, flash, jsonify
-from model.Query import authenticate_user, get_categories, get_commodities_by_category, add_dataset_entry, create_user, get_all_datasets, get_latest_datasets
+from model.Query import authenticate_user, get_categories, get_commodities_by_category, add_dataset_entry, create_user, get_all_datasets, get_latest_datasets, get_datasets_paginated, get_total_datasets_count
 from model.NN.estimator import *
 
 def register_routes(app):
@@ -19,7 +19,6 @@ def register_routes(app):
                 session['username'] = user['username']
                 session['is_admin'] = user['isAdmin']
                 
-                # Redirect to admin page if user is admin
                 if user['isAdmin']:
                     return redirect(url_for('admin'))
                 else:
@@ -56,7 +55,7 @@ def register_routes(app):
         if 'user_id' not in session:
             return redirect(url_for('login'))
         
-        # Redirect admin users to admin page
+
         if session.get('is_admin'):
             return redirect(url_for('admin'))
         
@@ -68,7 +67,7 @@ def register_routes(app):
         if 'user_id' not in session:
             return redirect(url_for('login'))
         
-        # Check if user is admin
+
         if not session.get('is_admin'):
             flash('Access denied. Admin privileges required.', 'error')
             return redirect(url_for('main'))
@@ -80,8 +79,25 @@ def register_routes(app):
         if 'user_id' not in session or not session.get('is_admin'):
             return jsonify({'error': 'Unauthorized'}), 403
         
-        datasets = get_all_datasets()
-        return jsonify(datasets)
+        page = request.args.get('page', 1, type=int)
+        limit = 50
+        offset = (page - 1) * limit
+        
+        datasets = get_datasets_paginated(limit, offset)
+        total_count = get_total_datasets_count()
+        total_pages = (total_count + limit - 1) // limit  # Ceiling division
+        
+        return jsonify({
+            'datasets': datasets,
+            'pagination': {
+                'current_page': page,
+                'total_pages': total_pages,
+                'total_count': total_count,
+                'has_next': page < total_pages,
+                'has_prev': page > 1,
+                'limit': limit
+            }
+        })
     
     @app.route("/admin/latest-datasets")
     def admin_latest_datasets():

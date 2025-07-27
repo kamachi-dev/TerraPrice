@@ -82,6 +82,23 @@ def get_all_datasets():
     )
     return [dict(row) for row in result]
 
+def get_datasets_paginated(limit, offset):
+    result = query_db(
+        "SELECT id, latitude, longitude, category, commodity, pricetype, price FROM dataset ORDER BY id DESC LIMIT %s OFFSET %s",
+        (limit, offset),
+        fetch=True,
+        dictionary=True
+    )
+    return [dict(row) for row in result]
+
+def get_total_datasets_count():
+    result = query_db(
+        "SELECT COUNT(*) as count FROM dataset",
+        fetch=True,
+        dictionary=True
+    )
+    return result[0]['count'] if result else 0
+
 def get_latest_datasets(limit=5):
     result = query_db(
         "SELECT id, latitude, longitude, category, commodity, pricetype, price FROM dataset ORDER BY id DESC LIMIT %s",

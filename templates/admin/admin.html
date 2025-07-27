@@ -44,7 +44,12 @@
         <div id="all-datasets-tab" class="tab-content active">
             <div class="section-header">
                 <h2>All Datasets</h2>
-                <button class="btn-refresh" onclick="loadAllDatasets()">🔄 Refresh</button>
+                <div class="header-controls">
+                    <div class="pagination-info">
+                        <span id="pagination-info">Loading...</span>
+                    </div>
+                    <button class="btn-refresh" onclick="loadAllDatasets()">🔄 Refresh</button>
+                </div>
             </div>
             
             <div class="table-container">
@@ -66,6 +71,18 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            
+            <div class="pagination-controls">
+                <button id="prev-btn" class="btn-pagination" onclick="previousPage()" disabled>
+                    ← Previous
+                </button>
+                <div class="page-numbers" id="page-numbers">
+                    <!-- Page numbers will be inserted here -->
+                </div>
+                <button id="next-btn" class="btn-pagination" onclick="nextPage()" disabled>
+                    Next →
+                </button>
             </div>
         </div>
         
