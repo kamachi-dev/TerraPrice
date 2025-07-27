@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraPrice - Sign In</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/login.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="login-section">
+            <div class="logo">
+                <div></div>
+                <h2>TerraPrice</h2>
+            </div>
+            
+            <div class="login-form">
+                <!-- Login Form -->
+                <div id="login-form" class="form-container">
+                    <h1>Sign in</h1>
+                    <p class="subtitle">Don't have an account? <a href="#" class="link" onclick="toggleForm()">Create now</a></p>
+                    
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <form method="POST" action="{{ url_for('login') }}">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <div class="password-input">
+                                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                                <button type="button" class="toggle-password" onclick="togglePassword('password')">👁</button>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">Sign in</button>
+                    </form>
+                </div>
+
+                <!-- Register Form -->
+                <div id="register-form" class="form-container" style="display: none;">
+                    <h1>Create Account</h1>
+                    <p class="subtitle">Already have an account? <a href="#" class="link" onclick="toggleForm()">Sign in</a></p>
+                    
+                    <div id="register-alerts"></div>
+                    
+                    <form id="registration-form">
+                        <div class="form-group">
+                            <label for="reg-username">Username</label>
+                            <input type="text" id="reg-username" name="username" placeholder="Choose a username" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reg-password">Password</label>
+                            <div class="password-input">
+                                <input type="password" id="reg-password" name="password" placeholder="Create a password" required>
+                                <button type="button" class="toggle-password" onclick="togglePassword('reg-password')">👁</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm Password</label>
+                            <div class="password-input">
+                                <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm your password" required>
+                                <button type="button" class="toggle-password" onclick="togglePassword('confirm-password')">👁</button>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">Create Account</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="promo-section">
+            <div class="promo-content">
+                <div class="promo-card">
+                    <h3 id="promo-title">Predict food prices faster</h3>
+                    <p id="promo-text">Use our Neural Network System to predict food commodity prices based on location data across the Philippines.</p>
+                </div>
+                
+                <div class="features">
+                    <h3>Advanced Price Analytics</h3>
+                    <p>Analyzing market trends ensures that businesses always make informed decisions about food commodity pricing and supply chain management.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='JS/login.js') }}"></script>
+</body>
+</html>

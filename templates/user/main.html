@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraPrice - Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/main.css') }}">
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="header-logo">
+                <div></div>
+                <h1>TerraPrice</h1>
+            </div>
+            
+            <div class="user-info">
+                <span>Welcome, {{ session['username'] }}!</span>
+                <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'predict-tab')">Price Prediction</button>
+            <button class="tab-button" onclick="openTab(event, 'dataset-tab')">Add Dataset</button>
+        </div>
+        
+        <!-- Price Prediction Tab -->
+        <div id="predict-tab" class="tab-content active">
+            <div class="content-grid">
+                <div class="map-section">
+                    <h3>Select Location on Map</h3>
+                    <div id="predict-map" class="map"></div>
+                    <div class="coordinates">
+                        <p>Latitude: <span id="predict-lat">-</span></p>
+                        <p>Longitude: <span id="predict-lng">-</span></p>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Prediction Parameters</h3>
+                    <form id="predict-form">
+                        <div class="form-group">
+                            <label for="predict-category">Category</label>
+                            <select id="predict-category" name="category" required>
+                                <option value="">Select Category</option>
+                                {% for category in categories %}
+                                    <option value="{{ category }}">{{ category }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="predict-commodity">Commodity</label>
+                            <select id="predict-commodity" name="commodity" required>
+                                <option value="">Select Category First</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="predict-pricetype">Price Type</label>
+                            <select id="predict-pricetype" name="pricetype" required>
+                                <option value="">Select Price Type</option>
+                                <option value="retail">Retail</option>
+                                <option value="wholesale">Wholesale</option>
+                                <option value="farmgate">Farmgate</option>
+                            </select>
+                        </div>
+                        
+                        <input type="hidden" id="predict-latitude" name="latitude">
+                        <input type="hidden" id="predict-longitude" name="longitude">
+                        
+                        <button type="submit" class="btn-primary">Predict Price</button>
+                    </form>
+                    
+                    <div id="prediction-result" class="result-section" style="display: none;">
+                        <h4>Prediction Result</h4>
+                        <div class="result-card">
+                            <p><strong>Commodity:</strong> <span id="result-commodity"></span></p>
+                            <p><strong>Price Type:</strong> <span id="result-pricetype"></span></p>
+                            <p><strong>Location:</strong> <span id="result-location"></span></p>
+                            <p><strong>Predicted Price:</strong> ₱<span id="result-price"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add Dataset Tab -->
+        <div id="dataset-tab" class="tab-content">
+            <div class="content-grid">
+                <div class="map-section">
+                    <h3>Select Location for Dataset</h3>
+                    <div id="dataset-map" class="map"></div>
+                    <div class="coordinates">
+                        <p>Latitude: <span id="dataset-lat">-</span></p>
+                        <p>Longitude: <span id="dataset-lng">-</span></p>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Dataset Entry</h3>
+                    <form id="dataset-form">
+                        <div class="form-group">
+                            <label for="dataset-category">Category</label>
+                            <select id="dataset-category" name="category" required>
+                                <option value="">Select Category</option>
+                                {% for category in categories %}
+                                    <option value="{{ category }}">{{ category }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dataset-commodity">Commodity</label>
+                            <select id="dataset-commodity" name="commodity" required>
+                                <option value="">Select Category First</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="pricetype">Price Type</label>
+                            <select id="pricetype" name="pricetype" required>
+                                <option value="">Select Price Type</option>
+                                <option value="retail">Retail</option>
+                                <option value="wholesale">Wholesale</option>
+                                <option value="farmgate">Farmgate</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="value">Price Value (₱)</label>
+                            <input type="number" id="value" name="value" step="0.01" placeholder="Enter price value" required>
+                        </div>
+                        
+                        <input type="hidden" id="dataset-latitude" name="latitude">
+                        <input type="hidden" id="dataset-longitude" name="longitude">
+                        
+                        <button type="submit" class="btn-primary">Add to Dataset</button>
+                    </form>
+                    
+                    <div id="dataset-result" class="result-section" style="display: none;">
+                        <div class="result-card">
+                            <p id="dataset-message"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="{{ url_for('static', filename='JS/main.js') }}"></script>
+</body>
+</html>
