@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TerraPrice - Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/admin.css') }}">
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>🛡️ TerraPrice Admin Dashboard</h1>
+            <div class="user-info">
+                <span class="admin-badge">Admin</span>
+                <span>Welcome, {{ session.username }}!</span>
+                <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="admin-stats">
+            <div class="stat-card">
+                <h3>Total Datasets</h3>
+                <p id="total-datasets">Loading...</p>
+            </div>
+            <div class="stat-card">
+                <h3>Latest Entries</h3>
+                <p id="latest-count">5</p>
+            </div>
+            <div class="stat-card">
+                <h3>Model Status</h3>
+                <p id="model-status">Ready</p>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'all-datasets-tab')">All Datasets</button>
+            <button class="tab-button" onclick="openTab(event, 'latest-datasets-tab')">Latest Datasets</button>
+            <button class="tab-button" onclick="openTab(event, 'model-training-tab')">Model Training</button>
+        </div>
+        
+        <!-- All Datasets Tab -->
+        <div id="all-datasets-tab" class="tab-content active">
+            <div class="section-header">
+                <h2>All Datasets</h2>
+                <button class="btn-refresh" onclick="loadAllDatasets()">🔄 Refresh</button>
+            </div>
+            
+            <div class="table-container">
+                <table id="all-datasets-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                            <th>Category</th>
+                            <th>Commodity</th>
+                            <th>Price Type</th>
+                            <th>Price (₱)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="7" class="loading">Loading datasets...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Latest Datasets Tab -->
+        <div id="latest-datasets-tab" class="tab-content">
+            <div class="section-header">
+                <h2>Latest 5 Datasets</h2>
+                <button class="btn-refresh" onclick="loadLatestDatasets()">🔄 Refresh</button>
+            </div>
+            
+            <div class="table-container">
+                <table id="latest-datasets-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                            <th>Category</th>
+                            <th>Commodity</th>
+                            <th>Price Type</th>
+                            <th>Price (₱)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="7" class="loading">Loading latest datasets...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Model Training Tab -->
+        <div id="model-training-tab" class="tab-content">
+            <div class="training-section">
+                <h2>Model Training</h2>
+                <p class="training-description">
+                    Retrain the neural network model with the latest dataset entries to improve prediction accuracy.
+                </p>
+                
+                <div class="training-card">
+                    <div class="training-info">
+                        <h3>Current Model Status</h3>
+                        <p>Last trained: <span id="last-trained">Never</span></p>
+                        <p>Training status: <span id="training-status">Ready</span></p>
+                    </div>
+                    
+                    <div class="training-actions">
+                        <button id="train-btn" class="btn-train" onclick="trainModel()">
+                            🚀 Retrain Model
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="training-log" class="training-log" style="display: none;">
+                    <h4>Training Log</h4>
+                    <div id="log-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='JS/admin.js') }}"></script>
+</body>
+</html>

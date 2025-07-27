@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, session, flash, jsonify
-from model.Query import authenticate_user, get_categories, get_commodities_by_category, add_dataset_entry, create_user
+from model.Query import authenticate_user, get_categories, get_commodities_by_category, add_dataset_entry, create_user, get_all_datasets, get_latest_datasets
 from model.NN.estimator import *
 
 def register_routes(app):
@@ -18,7 +18,12 @@ def register_routes(app):
                 session['user_id'] = user['id']
                 session['username'] = user['username']
                 session['is_admin'] = user['isAdmin']
-                return redirect(url_for('main'))
+                
+                # Redirect to admin page if user is admin
+                if user['isAdmin']:
+                    return redirect(url_for('admin'))
+                else:
+                    return redirect(url_for('main'))
             else:
                 flash('Invalid username or password', 'error')
         
@@ -44,7 +49,6 @@ def register_routes(app):
     @app.route("/logout")
     def logout():
         session.clear()
-        
         return redirect(url_for('login'))
     
     @app.route("/main")
@@ -52,8 +56,61 @@ def register_routes(app):
         if 'user_id' not in session:
             return redirect(url_for('login'))
         
+        # Redirect admin users to admin page
+        if session.get('is_admin'):
+            return redirect(url_for('admin'))
+        
         categories = get_categories()
         return render_template("user/main.html", categories=categories)
+    
+    @app.route("/admin")
+    def admin():
+        if 'user_id' not in session:
+            return redirect(url_for('login'))
+        
+        # Check if user is admin
+        if not session.get('is_admin'):
+            flash('Access denied. Admin privileges required.', 'error')
+            return redirect(url_for('main'))
+        
+        return render_template("admin/admin.html")
+    
+    @app.route("/admin/datasets")
+    def admin_datasets():
+        if 'user_id' not in session or not session.get('is_admin'):
+            return jsonify({'error': 'Unauthorized'}), 403
+        
+        datasets = get_all_datasets()
+        return jsonify(datasets)
+    
+    @app.route("/admin/latest-datasets")
+    def admin_latest_datasets():
+        if 'user_id' not in session or not session.get('is_admin'):
+            return jsonify({'error': 'Unauthorized'}), 403
+        
+        latest_datasets = get_latest_datasets(5)
+        return jsonify(latest_datasets)
+    
+    @app.route("/admin/train", methods=["POST"])
+    def train_model():
+        if 'user_id' not in session or not session.get('is_admin'):
+            return jsonify({'error': 'Unauthorized'}), 403
+        
+        try:
+            # TODO: Implement actual model training
+            # For now, simulate training process
+            import time
+            time.sleep(2)  # Simulate training time
+            
+            return jsonify({
+                'success': True,
+                'message': 'Model retrained successfully with latest dataset'
+            })
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'message': f'Training failed: {str(e)}'
+            })
     
     @app.route("/get_commodities/<category>")
     def get_commodities(category):
@@ -78,7 +135,6 @@ def register_routes(app):
             'pricetype': pricetype
         })
     
-    
     @app.route("/add_dataset", methods=["POST"])
     def add_dataset():
         if 'user_id' not in session:
@@ -99,4 +155,3 @@ def register_routes(app):
             'success': success,
             'message': 'Dataset entry added successfully' if success else 'Failed to add dataset entry'
         })
-

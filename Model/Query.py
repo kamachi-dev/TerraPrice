@@ -74,10 +74,27 @@ def get_commodities_by_category(category):
     )
     return [row['commodity'] for row in result]
 
+def get_all_datasets():
+    result = query_db(
+        "SELECT id, latitude, longitude, category, commodity, pricetype, price FROM dataset ORDER BY id DESC",
+        fetch=True,
+        dictionary=True
+    )
+    return [dict(row) for row in result]
+
+def get_latest_datasets(limit=5):
+    result = query_db(
+        "SELECT id, latitude, longitude, category, commodity, pricetype, price FROM dataset ORDER BY id DESC LIMIT %s",
+        (limit,),
+        fetch=True,
+        dictionary=True
+    )
+    return [dict(row) for row in result]
+
 def add_dataset_entry(data):
     try:
         query_db(
-            """INSERT INTO dataset (latitude, longitude, category, commodity, pricetype, value) 
+            """INSERT INTO dataset (latitude, longitude, category, commodity, pricetype, price) 
                VALUES (%s, %s, %s, %s, %s, %s)""",
             (data['latitude'], data['longitude'], data['category'], 
              data['commodity'], data['pricetype'], data['value'])
