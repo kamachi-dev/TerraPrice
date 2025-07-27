@@ -99,7 +99,7 @@ class NeuralNetwork:
                 print(f"Epoch {epoch:4d} | Train Loss: {train_loss:.6f} | Val Loss: {val_loss:.6f}")
                 
                 # Early stopping check
-                if val_loss < best_val_loss - tol:
+                if val_loss < best_val_loss + tol:
                     best_val_loss = val_loss
                     patience_counter = 0
                     best_weights = [w.copy() for w in self.w]
