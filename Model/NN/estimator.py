@@ -257,7 +257,7 @@ def train():
 def pred(longt, lati, commo, pricetype):
     new_data = {
         'latitude': lati,
-        'longitude': lati,
+        'longitude': longt,
         'commodity': commo,
         'pricetype': pricetype
     }
@@ -267,7 +267,5 @@ def pred(longt, lati, commo, pricetype):
     return prediction[0]
 
 __main__.NeuralNetwork = NeuralNetwork
-# pred(120.98, 14.6, "Maize flour (yellow)", "Retail")
+pred(120.98, 14.6, "Maize flour (yellow)", "Retail")
 
-
-train()
