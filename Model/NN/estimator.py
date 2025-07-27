@@ -140,47 +140,41 @@ def predict_from_saved_model(data_input, model_path='estimator.pkl'):
     nn = model_data['neural_network']
     scaler = model_data['scaler']
     feature_columns = model_data['feature_columns']
-    
+
+    new_commodity = f'commodity_{data_input.get('commodity', None)}'
+    new_pricetype = f'pricetype_{data_input.get('pricetype', None)}'
+
     # Process input data
     if isinstance(data_input, str):  # CSV file path
         df = pd.read_csv(data_input)
     elif isinstance(data_input, dict):  # Dictionary input
-        df = pd.DataFrame([data_input])
+        df = pd.DataFrame([{
+            'latitude': data_input.get('latitude', None),
+            'longitude': data_input.get('longitude', None),
+            new_commodity: 1,
+            new_pricetype: 1
+        }], columns=feature_columns)
+        df = df.fillna(0)
     else:  # Already a DataFrame
         df = data_input.copy()
-    
-    # Ensure required columns exist
-    required_cols = ['latitude', 'longitude', 'commodity', 'pricetype']
-    missing_cols = [col for col in required_cols if col not in df.columns]
-    if missing_cols:
-        raise ValueError(f"Missing required columns: {missing_cols}")
-    
+
+    print(df.head())
+
     # Clean and preprocess data
     df['latitude'] = pd.to_numeric(df['latitude'], errors='coerce')
     df['longitude'] = pd.to_numeric(df['longitude'], errors='coerce')
     df = df.dropna()
     
-    # Apply one-hot encoding (matching training data structure)  
-    df_encoded = pd.get_dummies(df, columns=['commodity', 'pricetype'], drop_first=True)
-    
-    # CREATE EXACT FEATURE MATRIX - Initialize with zeros for all training features
-    feature_matrix = pd.DataFrame(0, index=df_encoded.index, columns=feature_columns, dtype=float)
-    
-    # Fill in the values for columns that exist in both training and prediction data
-    for col in df_encoded.columns:
-        if col in feature_columns:
-            feature_matrix[col] = df_encoded[col].values
-    
-    # Convert to numpy array (now guaranteed to have exact same columns as training)
-    X_new = feature_matrix.values.astype(float)
-    
     # Scale the data using the saved scaler
-    X_scaled = scaler.transform(X_new)
+    X_scaled = scaler.transform(df.values)
+
+    print(pd.DataFrame(X_scaled, columns=feature_columns).head())  # Debugging line to check scaled data
     
     # Make predictions
     predictions = nn.predict(X_scaled)
     
     return predictions.flatten()
+
 
 # ALDRINE FUNCTIONS!!! ############################################################
 def train():
@@ -267,5 +261,3 @@ def pred(longt, lati, commo, pricetype):
     return prediction[0]
 
 __main__.NeuralNetwork = NeuralNetwork
-pred(120.98, 14.6, "Maize flour (yellow)", "Retail")
-
