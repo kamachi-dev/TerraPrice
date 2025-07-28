@@ -60,7 +60,12 @@ def register_routes(app):
             return redirect(url_for('admin'))
         
         categories = get_categories()
+        print(categories)
         return render_template("user/main.html", categories=categories)
+    
+    @app.route("/get_categories")
+    def get_cat():
+        return jsonify(get_categories())
     
     @app.route("/admin")
     def admin():
