@@ -143,10 +143,11 @@ def register_routes(app):
         longitude = request.form.get("longitude")
         commodity = request.form.get("commodity")
         pricetype = request.form.get("pricetype")
-        
+        pred_price = pred(longitude, latitude, commodity, pricetype)
+        print(pred_price, "You called this")
         return jsonify({
             'success': True,
-            'predicted_price': pred(longitude, latitude, commodity, pricetype),
+            'predicted_price': pred_price,
             'location': f"Latitude: {latitude}, \n Longtitude: {longitude}",
             'commodity': commodity,
             'pricetype': pricetype
