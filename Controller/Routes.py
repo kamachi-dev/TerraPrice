@@ -15,6 +15,7 @@ def register_routes(app):
             
             user = authenticate_user(username, password)
             if user:
+                print("Debug: work")
                 session['user_id'] = user['id']
                 session['username'] = user['username']
                 session['is_admin'] = user['isAdmin']
