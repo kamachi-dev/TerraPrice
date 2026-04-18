@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, session, flash, jsonify
-from model.Query import authenticate_user, get_categories, get_commodities_by_category, add_dataset_entry, create_user, get_all_datasets, get_latest_datasets, get_datasets_paginated, get_total_datasets_count
-from model.NN.estimator import *
+from Model.Query import authenticate_user, get_categories, get_commodities_by_category, add_dataset_entry, create_user, get_all_datasets, get_latest_datasets, get_datasets_paginated, get_total_datasets_count
+from Model.NN.estimator import *
 
 def register_routes(app):
     @app.route("/")

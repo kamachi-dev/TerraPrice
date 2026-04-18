@@ -1,6 +1,6 @@
 from flask import Flask
 
-from controller.Routes import register_routes
+from Controller.Routes import register_routes
 
 app = Flask(__name__)
 app.secret_key = 'TerraPrice'
