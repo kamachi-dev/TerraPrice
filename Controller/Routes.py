@@ -67,27 +67,23 @@ def register_routes(app):
 
     @app.route("/auth/callback")
     def auth_callback():
-        return render_template("auth/callback.html")
-
-    @app.route("/auth/session", methods=["POST"])
-    def auth_session():
-        data = request.get_json()
-        access_token = data.get("access_token")
-        refresh_token = data.get("refresh_token")
-        if not access_token:
-            return jsonify({"success": False, "error": "Missing token"}), 400
-        client = get_client()
-        try:
-            res = client.auth.set_session(access_token, refresh_token)
-            user = res.user
-            profile = client.table("profiles").select("*").eq("id", user.id).execute()
-            p = profile.data[0] if profile.data else {}
-            session["user_id"] = user.id
-            session["username"] = p.get("username", user.email.split("@")[0])
-            session["is_admin"] = p.get("role") == "admin"
-            return jsonify({"success": True})
-        except Exception as e:
-            return jsonify({"success": False, "error": str(e)}), 500
+        code = request.args.get("code")
+        if code:
+            client = get_client()
+            try:
+                res = client.auth.exchange_code_for_session(code)
+                user = res.user
+                profile = client.table("profiles").select("*").eq("id", user.id).execute()
+                p = profile.data[0] if profile.data else {}
+                session["user_id"] = user.id
+                session["username"] = p.get("username", user.email.split("@")[0])
+                session["is_admin"] = p.get("role") == "admin"
+                return redirect(url_for("main"))
+            except Exception as e:
+                flash(str(e), "error")
+        else:
+            flash("Missing auth code", "error")
+        return redirect(url_for("login"))
 
     @app.route("/logout")
     def logout():
