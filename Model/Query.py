@@ -1,121 +1,115 @@
-from psycopg2.extras import RealDictCursor
-from .ConnectionInPostgre import MyConnection
-import hashlib
+from .SupabaseClient import get_client, get_service_client
 
-def query_db(query, args=(), fetch=False, dictionary=False):
-    conn = MyConnection(
-        host="aws-0-ap-southeast-1.pooler.supabase.com",
-        user="postgres.rgdisearlwcbmbvwrrli",
-        password="TerraPrice@553431!",
-        database="postgres",
-        port=6543
-    ).connect()
-
-    cursor_factory = RealDictCursor if dictionary else None
-    cursor = conn.cursor(cursor_factory=cursor_factory)
-
-    cursor.execute(query, args)
-    result = cursor.fetchall() if fetch else None
-
-    conn.commit()
-    cursor.close()
-    conn.close()
-    return result
 
 def search_region(region):
-    result = query_db("SELECT * FROM dataset WHERE admin1 = %s", (region,), fetch=True, dictionary=True)
-    return [dict(row) for row in result]
+    client = get_client()
+    result = client.table("dataset").select("*").eq("admin1", region).execute()
+    return result.data
 
-def authenticate_user(username, password):
-    hashed_password = hashlib.sha256(password.encode()).hexdigest()
-    
-    result = query_db(
-        'SELECT id, username, "isAdmin" FROM account WHERE username = %s AND password = %s',
-        (username, hashed_password),
-        fetch=True,
-        dictionary=True
-    )
-    print("AUTH CALLED")
-    print(result[0] if result else None)
-    return result[0] if result else None
 
-def create_user(username, password, is_admin=False):
-    existing_user = query_db(
-        "SELECT id FROM account WHERE username = %s",
-        (username,),
-        fetch=True,
-        dictionary=True
-    )
-    
-    if existing_user:
-        return False, "Username already exists"
-    hashed_password = hashlib.sha256(password.encode()).hexdigest()
-    
+def authenticate_user(email, password):
+    client = get_client()
     try:
-        query_db(
-            "INSERT INTO account (username, password) VALUES (%s, %s)",
-            (username, hashed_password)
-        )
+        session = client.auth.sign_in_with_password({"email": email, "password": password})
+        user = session.user
+        profile_result = client.table("profiles").select("*").eq("id", user.id).execute()
+        profile = profile_result.data[0] if profile_result.data else None
+        return {
+            "id": user.id,
+            "email": user.email,
+            "username": profile["username"] if profile else user.email.split("@")[0],
+            "isAdmin": profile["role"] == "admin" if profile else False,
+            "access_token": session.session.access_token,
+            "refresh_token": session.session.refresh_token,
+        }
+    except Exception as e:
+        print(f"Auth error: {e}")
+        return None
+
+
+def create_user(email, password, username):
+    client = get_client()
+    try:
+        session = client.auth.sign_up({
+            "email": email,
+            "password": password,
+            "options": {"data": {"username": username}},
+        })
         return True, "Account created successfully"
     except Exception as e:
-        print(f"Error creating user: {e}")
+        error_msg = str(e)
+        if "already registered" in error_msg.lower():
+            return False, "Email already registered"
+        if "already exists" in error_msg.lower():
+            return False, "Email already registered"
+        print(f"Registration error: {e}")
         return False, "Failed to create account"
 
+
+def get_profile(user_id):
+    client = get_client()
+    result = client.table("profiles").select("*").eq("id", user_id).execute()
+    return result.data[0] if result.data else None
+
+
 def get_categories():
-    result = query_db("SELECT DISTINCT category FROM dataset ORDER BY category", fetch=True, dictionary=True)
-    return [row['category'] for row in result]
+    client = get_client()
+    result = client.table("dataset").select("category").execute()
+    categories = set()
+    for row in result.data:
+        if row.get("category"):
+            categories.add(row["category"])
+    return sorted(categories)
+
 
 def get_commodities_by_category(category):
-    result = query_db(
-        "SELECT DISTINCT commodity FROM dataset WHERE category = %s ORDER BY commodity",
-        (category,),
-        fetch=True,
-        dictionary=True
-    )
-    return [row['commodity'] for row in result]
+    client = get_client()
+    result = client.table("dataset").select("commodity").eq("category", category).execute()
+    commodities = set()
+    for row in result.data:
+        if row.get("commodity"):
+            commodities.add(row["commodity"])
+    return sorted(commodities)
+
 
 def get_all_datasets():
-    result = query_db(
-        "SELECT id, latitude, longitude, category, commodity, pricetype, price FROM dataset ORDER BY id DESC",
-        fetch=True,
-        dictionary=True
-    )
-    return [dict(row) for row in result]
+    client = get_client()
+    result = client.table("dataset").select("id, latitude, longitude, category, commodity, pricetype, price").order("id", desc=True).execute()
+    return result.data
+
 
 def get_datasets_paginated(limit, offset):
-    result = query_db(
-        "SELECT id, latitude, longitude, category, commodity, pricetype, price FROM dataset ORDER BY id DESC LIMIT %s OFFSET %s",
-        (limit, offset),
-        fetch=True,
-        dictionary=True
-    )
-    return [dict(row) for row in result]
+    client = get_client()
+    result = client.table("dataset").select("id, latitude, longitude, category, commodity, pricetype, price").order("id", desc=True).range(offset, offset + limit - 1).execute()
+    return result.data
+
 
 def get_total_datasets_count():
-    result = query_db(
-        "SELECT COUNT(*) as count FROM dataset",
-        fetch=True,
-        dictionary=True
-    )
-    return result[0]['count'] if result else 0
+    client = get_client()
+    result = client.table("dataset").select("id", count="exact").execute()
+    return result.count if hasattr(result, 'count') and result.count else 0
+
 
 def get_latest_datasets(limit=5):
-    result = query_db(
-        "SELECT id, latitude, longitude, category, commodity, pricetype, price FROM dataset ORDER BY id DESC LIMIT %s",
-        (limit,),
-        fetch=True,
-        dictionary=True
-    )
-    return [dict(row) for row in result]
+    client = get_client()
+    result = client.table("dataset").select("id, latitude, longitude, category, commodity, pricetype, price").order("id", desc=True).limit(limit).execute()
+    return result.data
 
-def add_dataset_entry(data):
+
+def add_dataset_entry(data, user_id=None):
+    client = get_client()
     try:
-        query_db(
-            """INSERT INTO dataset (latitude, longitude, category, commodity, pricetype, price) 
-               VALUES (%s, %s, %s, %s, %s, %s)""",
-            (data['latitude'], data['longitude'], data['category'], 
-             data['commodity'], data['pricetype'], data['value'])
-        )
+        payload = {
+            "latitude": data["latitude"],
+            "longitude": data["longitude"],
+            "category": data["category"],
+            "commodity": data["commodity"],
+            "pricetype": data["pricetype"],
+            "price": data["value"],
+        }
+        if user_id:
+            payload["user_id"] = user_id
+        client.table("dataset").insert(payload).execute()
         return True
     except Exception as e:
         print(f"Error adding dataset entry: {e}")

@@ -22,14 +22,12 @@ function toggleForm() {
 
   setTimeout(() => {
     if (loginForm.style.display === "none") {
-      // Show login form
       loginForm.style.display = "block"
       registerForm.style.display = "none"
       promoTitle.textContent = "Predict food prices faster"
       promoText.textContent =
         "Use our Neural Network System to predict food commodity prices based on location data across the Philippines."
     } else {
-      // Show register form
       loginForm.style.display = "none"
       registerForm.style.display = "block"
       promoTitle.textContent = "Join TerraPrice today"
@@ -37,7 +35,6 @@ function toggleForm() {
         "Create your account to access advanced food price prediction tools and contribute to our comprehensive database."
     }
 
-    // Remove switching animation
     setTimeout(() => {
       loginForm.classList.remove("switching")
       registerForm.classList.remove("switching")
@@ -48,7 +45,10 @@ function toggleForm() {
 function showAlert(message, type, containerId) {
   const container = document.getElementById(containerId)
   container.innerHTML = `<div class="alert alert-${type}">${message}</div>`
+}
 
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -57,12 +57,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (loginForm) {
     loginForm.addEventListener("submit", (e) => {
-      const usernameInput = document.getElementById("username")
+      const emailInput = document.getElementById("email")
       const passwordInput = document.getElementById("password")
 
-      if (!usernameInput.value.trim() || !passwordInput.value.trim()) {
+      if (!emailInput.value.trim() || !passwordInput.value.trim()) {
         e.preventDefault()
         alert("Please fill in all fields")
+      }
+
+      if (!isValidEmail(emailInput.value.trim())) {
+        e.preventDefault()
+        alert("Please enter a valid email address")
       }
     })
   }
@@ -74,6 +79,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData(registerForm)
       const password = formData.get("password")
       const confirmPassword = formData.get("confirm_password")
+      const username = formData.get("username")
+      const email = formData.get("email")
       const submitButton = registerForm.querySelector('button[type="submit"]')
 
       document.getElementById("register-alerts").innerHTML = ""
@@ -84,12 +91,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (password.length < 6) {
-        showAlert("Password must be at least 6 semi-pogi long", "error", "register-alerts")
+        showAlert("Password must be at least 6 characters long", "error", "register-alerts")
         return
       }
 
-      if (formData.get("username").length < 3) {
-        showAlert("Username must be at least 3 semi-pogi long", "error", "register-alerts")
+      if (username.length < 3) {
+        showAlert("Username must be at least 3 characters long", "error", "register-alerts")
+        return
+      }
+
+      if (!isValidEmail(email)) {
+        showAlert("Please enter a valid email address", "error", "register-alerts")
         return
       }
 
