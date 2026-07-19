@@ -35,15 +35,19 @@ def create_user(email, password, username):
             "password": password,
             "options": {"data": {"username": username}},
         })
-        return True, "Account created successfully"
+        if session.user:
+            return True, "Account created successfully"
+        return True, "Account created. Check your email for confirmation."
     except Exception as e:
         error_msg = str(e)
-        if "already registered" in error_msg.lower():
+        if "already registered" in error_msg.lower() or "already exists" in error_msg.lower():
             return False, "Email already registered"
-        if "already exists" in error_msg.lower():
-            return False, "Email already registered"
+        if "rate limit" in error_msg.lower():
+            return False, "Too many attempts. Please wait a moment and try again."
+        if "invalid" in error_msg.lower() and "email" in error_msg.lower():
+            return False, "Please enter a valid email address"
         print(f"Registration error: {e}")
-        return False, "Failed to create account"
+        return False, f"Failed to create account: {error_msg}"
 
 
 def get_profile(user_id):
