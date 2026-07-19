@@ -4,6 +4,7 @@ from Model.Query import (
     add_dataset_entry, create_user, get_all_datasets, get_latest_datasets,
     get_datasets_paginated, get_total_datasets_count, get_profile
 )
+from Model.SupabaseClient import get_client
 from Model.NN.estimator import *
 
 
@@ -18,18 +19,19 @@ def register_routes(app):
             email = request.form.get("email")
             password = request.form.get("password")
 
-            user = authenticate_user(email, password)
-            if user:
-                session["user_id"] = user["id"]
-                session["username"] = user["username"]
-                session["is_admin"] = user["isAdmin"]
+            result = authenticate_user(email, password)
+            if result and "_error" not in result:
+                session["user_id"] = result["id"]
+                session["username"] = result["username"]
+                session["is_admin"] = result["isAdmin"]
 
-                if user["isAdmin"]:
+                if result["isAdmin"]:
                     return redirect(url_for("admin"))
                 else:
                     return redirect(url_for("main"))
             else:
-                flash("Invalid email or password", "error")
+                msg = result.get("_error", "Invalid email or password") if result else "Invalid email or password"
+                flash(msg, "error")
 
         return render_template("login.html")
 
@@ -50,6 +52,40 @@ def register_routes(app):
                 "success": False,
                 "message": "An error occurred during registration",
             })
+
+    @app.route("/login/google")
+    def login_google():
+        client = get_client()
+        redirect_to = request.url_root.rstrip("/") + "/auth/callback"
+        res = client.auth.sign_in_with_oauth({
+            "provider": "google",
+            "options": {"redirect_to": redirect_to},
+        })
+        return redirect(res.url)
+
+    @app.route("/auth/callback")
+    def auth_callback():
+        return render_template("auth/callback.html")
+
+    @app.route("/auth/session", methods=["POST"])
+    def auth_session():
+        data = request.get_json()
+        access_token = data.get("access_token")
+        refresh_token = data.get("refresh_token")
+        if not access_token:
+            return jsonify({"success": False, "error": "Missing token"}), 400
+        client = get_client()
+        try:
+            res = client.auth.set_session(access_token, refresh_token)
+            user = res.user
+            profile = client.table("profiles").select("*").eq("id", user.id).execute()
+            p = profile.data[0] if profile.data else {}
+            session["user_id"] = user.id
+            session["username"] = p.get("username", user.email.split("@")[0])
+            session["is_admin"] = p.get("role") == "admin"
+            return jsonify({"success": True})
+        except Exception as e:
+            return jsonify({"success": False, "error": str(e)}), 500
 
     @app.route("/logout")
     def logout():
