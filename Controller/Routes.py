@@ -73,16 +73,18 @@ def register_routes(app):
                 res = client.auth.exchange_code_for_session(code)
                 user = res.user
                 profile = client.table("profiles").select("*").eq("id", user.id).execute()
-                if not profile.data:
-                    username = (user.user_metadata.get("full_name") or user.email.split("@")[0]).replace(" ", "_")
+                row = profile.data[0] if profile.data else {}
+                p = row if isinstance(row, dict) else {}
+                if not p:
+                    meta = user.user_metadata if isinstance(user.user_metadata, dict) else {}
+                    name = meta.get("full_name") or meta.get("name") or user.email.split("@")[0]
+                    username = str(name).replace(" ", "_")
                     client.table("profiles").insert({
                         "id": user.id,
                         "username": username,
                         "role": "user",
                     }).execute()
                     p = {"username": username, "role": "user"}
-                else:
-                    p = profile.data[0]
                 session["user_id"] = user.id
                 session["username"] = p.get("username", user.email.split("@")[0])
                 session["is_admin"] = p.get("role") == "admin"

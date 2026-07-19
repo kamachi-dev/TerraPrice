@@ -7,7 +7,8 @@ def authenticate_user(email, password):
         session = client.auth.sign_in_with_password({"email": email, "password": password})
         user = session.user
         profile = client.table("profiles").select("*").eq("id", user.id).execute()
-        p = profile.data[0] if profile.data else {}
+        row = profile.data[0] if profile.data else {}
+        p = row if isinstance(row, dict) else {}
         return {
             "id": user.id,
             "email": user.email,
