@@ -57,8 +57,7 @@ def register_routes(app):
     @app.route("/login/google")
     def login_google():
         client = get_client()
-        site_url = os.environ.get("SITE_URL", request.url_root.rstrip("/"))
-        redirect_to = site_url.rstrip("/") + "/auth/callback"
+        redirect_to = os.environ.get("AUTH_CALLBACK_URL", request.url_root.rstrip("/") + "/auth/callback")
         res = client.auth.sign_in_with_oauth({
             "provider": "google",
             "options": {"redirect_to": redirect_to},

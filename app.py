@@ -11,4 +11,4 @@ app.secret_key = os.environ.get("FLASK_SECRET_KEY", "terraprice-secret-key")
 register_routes(app)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=1234, debug=True)
+    app.run(host="0.0.0.0", port=3000, debug=True)
