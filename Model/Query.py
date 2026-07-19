@@ -15,8 +15,7 @@ def authenticate_user(email, password):
             "isAdmin": p.get("role") == "admin",
         }
     except Exception as e:
-        print(f"Auth error: {e}")
-        return None
+        return {"_error": str(e)}
 
 
 def create_user(email, password, username):
