@@ -1,24 +1,18 @@
 from .SupabaseClient import get_client
 
 
-def search_region(region):
-    client = get_client()
-    result = client.table("dataset").select("*").eq("admin1", region).execute()
-    return result.data
-
-
 def authenticate_user(email, password):
     client = get_client()
     try:
         session = client.auth.sign_in_with_password({"email": email, "password": password})
         user = session.user
-        profile_result = client.table("profiles").select("*").eq("id", user.id).execute()
-        profile = profile_result.data[0] if profile_result.data else None
+        profile = client.table("profiles").select("*").eq("id", user.id).execute()
+        p = profile.data[0] if profile.data else {}
         return {
             "id": user.id,
             "email": user.email,
-            "username": profile["username"] if profile else user.email.split("@")[0],
-            "isAdmin": profile["role"] == "admin" if profile else False,
+            "username": p.get("username", user.email.split("@")[0]),
+            "isAdmin": p.get("role") == "admin",
         }
     except Exception as e:
         print(f"Auth error: {e}")
@@ -36,68 +30,67 @@ def create_user(email, password, username):
         if session.user:
             try:
                 client.rpc("confirm_user", {"user_email": email}).execute()
-            except Exception as confirm_err:
-                print(f"Confirm error (non-fatal): {confirm_err}")
+            except Exception:
+                pass
             return True, "Account created successfully"
         return True, "Account created. Check your email for confirmation."
     except Exception as e:
-        error_msg = str(e)
-        if "already registered" in error_msg.lower() or "already exists" in error_msg.lower():
+        m = str(e)
+        if "already registered" in m.lower():
             return False, "Email already registered"
-        if "rate limit" in error_msg.lower():
-            return False, "Too many attempts. Please wait a moment and try again."
-        print(f"Registration error: {e}")
-        return False, f"Registration failed: {error_msg}"
+        if "rate limit" in m.lower():
+            return False, "Too many attempts. Please wait."
+        return False, f"Registration failed: {m}"
 
 
 def get_profile(user_id):
     client = get_client()
-    result = client.table("profiles").select("*").eq("id", user_id).execute()
-    return result.data[0] if result.data else None
+    r = client.table("profiles").select("*").eq("id", user_id).execute()
+    return r.data[0] if r.data else None
 
 
 def get_categories():
     client = get_client()
-    result = client.table("dataset").select("category").execute()
-    categories = set()
-    for row in result.data:
+    r = client.table("dataset").select("category").execute()
+    cats = set()
+    for row in r.data:
         if row.get("category"):
-            categories.add(row["category"])
-    return sorted(categories)
+            cats.add(row["category"])
+    return sorted(cats)
 
 
 def get_commodities_by_category(category):
     client = get_client()
-    result = client.table("dataset").select("commodity").eq("category", category).execute()
-    commodities = set()
-    for row in result.data:
+    r = client.table("dataset").select("commodity").eq("category", category).execute()
+    coms = set()
+    for row in r.data:
         if row.get("commodity"):
-            commodities.add(row["commodity"])
-    return sorted(commodities)
+            coms.add(row["commodity"])
+    return sorted(coms)
 
 
 def get_all_datasets():
     client = get_client()
-    result = client.table("dataset").select("id, latitude, longitude, category, commodity, pricetype, price").order("id", desc=True).execute()
-    return result.data
+    r = client.table("dataset").select("id, latitude, longitude, category, commodity, pricetype, price").order("id", desc=True).execute()
+    return r.data
 
 
 def get_datasets_paginated(limit, offset):
     client = get_client()
-    result = client.table("dataset").select("id, latitude, longitude, category, commodity, pricetype, price").order("id", desc=True).range(offset, offset + limit - 1).execute()
-    return result.data
+    r = client.table("dataset").select("id, latitude, longitude, category, commodity, pricetype, price").order("id", desc=True).range(offset, offset + limit - 1).execute()
+    return r.data
 
 
 def get_total_datasets_count():
     client = get_client()
-    result = client.table("dataset").select("id", count="exact").execute()
-    return result.count if hasattr(result, 'count') and result.count else 0
+    r = client.table("dataset").select("id", count="exact").execute()
+    return r.count if hasattr(r, 'count') and r.count else 0
 
 
 def get_latest_datasets(limit=5):
     client = get_client()
-    result = client.table("dataset").select("id, latitude, longitude, category, commodity, pricetype, price").order("id", desc=True).limit(limit).execute()
-    return result.data
+    r = client.table("dataset").select("id, latitude, longitude, category, commodity, pricetype, price").order("id", desc=True).limit(limit).execute()
+    return r.data
 
 
 def add_dataset_entry(data, user_id=None):
