@@ -34,6 +34,10 @@ def create_user(email, password, username):
             "options": {"data": {"username": username}},
         })
         if session.user:
+            try:
+                client.rpc("confirm_user", {"user_email": email}).execute()
+            except Exception as confirm_err:
+                print(f"Confirm error (non-fatal): {confirm_err}")
             return True, "Account created successfully"
         return True, "Account created. Check your email for confirmation."
     except Exception as e:
