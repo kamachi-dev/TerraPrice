@@ -5,7 +5,6 @@ from Model.Query import (
     get_datasets_paginated, get_total_datasets_count, get_profile
 )
 from Model.NN.estimator import *
-from Model.SupabaseClient import get_client
 
 
 def register_routes(app):
@@ -24,8 +23,6 @@ def register_routes(app):
                 session["user_id"] = user["id"]
                 session["username"] = user["username"]
                 session["is_admin"] = user["isAdmin"]
-                session["access_token"] = user["access_token"]
-                session["refresh_token"] = user["refresh_token"]
 
                 if user["isAdmin"]:
                     return redirect(url_for("admin"))
@@ -56,13 +53,6 @@ def register_routes(app):
 
     @app.route("/logout")
     def logout():
-        try:
-            client = get_client()
-            if "access_token" in session and "refresh_token" in session:
-                client.auth.set_session(session["access_token"], session["refresh_token"])
-                client.auth.sign_out()
-        except Exception as e:
-            print(f"Logout error: {e}")
         session.clear()
         return redirect(url_for("login"))
 

@@ -1,0 +1,19 @@
+﻿ * Serving Flask app 'app'
+ * Debug mode: on
+python : WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server 
+instead.
+At line:1 char:60
++ ... ocation $d; $env:PYTHONIOENCODING='utf-8'; python app.py 2>&1 | Out-F ...
++                                                ~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (WARNING: This i...server instead.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:1234
+ * Running on http://10.2.0.2:1234
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 406-994-163
+127.0.0.1 - - [19/Jul/2026 15:18:58] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [19/Jul/2026 15:18:59] "POST /login HTTP/1.1" 200 -

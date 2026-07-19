@@ -1,4 +1,4 @@
-from .SupabaseClient import get_client, get_service_client
+from .SupabaseClient import get_client
 
 
 def search_region(region):
@@ -19,8 +19,6 @@ def authenticate_user(email, password):
             "email": user.email,
             "username": profile["username"] if profile else user.email.split("@")[0],
             "isAdmin": profile["role"] == "admin" if profile else False,
-            "access_token": session.session.access_token,
-            "refresh_token": session.session.refresh_token,
         }
     except Exception as e:
         print(f"Auth error: {e}")
@@ -44,10 +42,8 @@ def create_user(email, password, username):
             return False, "Email already registered"
         if "rate limit" in error_msg.lower():
             return False, "Too many attempts. Please wait a moment and try again."
-        if "invalid" in error_msg.lower() and "email" in error_msg.lower():
-            return False, "Please enter a valid email address"
         print(f"Registration error: {e}")
-        return False, f"Failed to create account: {error_msg}"
+        return False, f"Registration failed: {error_msg}"
 
 
 def get_profile(user_id):
