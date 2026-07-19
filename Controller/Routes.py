@@ -1,3 +1,4 @@
+import os
 from flask import render_template, request, redirect, url_for, session, flash, jsonify
 from Model.Query import (
     authenticate_user, get_categories, get_commodities_by_category,
@@ -56,7 +57,8 @@ def register_routes(app):
     @app.route("/login/google")
     def login_google():
         client = get_client()
-        redirect_to = request.url_root.rstrip("/") + "/auth/callback"
+        site_url = os.environ.get("SITE_URL", request.url_root.rstrip("/"))
+        redirect_to = site_url.rstrip("/") + "/auth/callback"
         res = client.auth.sign_in_with_oauth({
             "provider": "google",
             "options": {"redirect_to": redirect_to},
